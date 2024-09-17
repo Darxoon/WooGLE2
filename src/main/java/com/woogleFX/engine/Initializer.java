@@ -53,7 +53,7 @@ public class Initializer {
         if (!newWOG1Dir.isEmpty() && !Files.exists(Path.of(newWOG1Dir))) FileManager.setNewWOG1dir("");
 
         String wog2Dir = FileManager.getGameDir(GameVersion.VERSION_WOG2);
-        if (!wog2Dir.isEmpty() && !Files.exists(Path.of(wog2Dir))) FileManager.setWOG2dir("");
+        if (!wog2Dir.isEmpty() && !Files.exists(Path.of(wog2Dir))) FileManager.setWog2dir("");
 
         if (oldWOG1Dir.isEmpty() && newWOG1Dir.isEmpty() && wog2Dir.isEmpty()) {
             MissingWOGAlarm.show();

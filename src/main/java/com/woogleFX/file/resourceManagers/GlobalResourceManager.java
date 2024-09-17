@@ -8,7 +8,8 @@ import com.woogleFX.gameData.animation.AnimBinReader;
 import com.woogleFX.gameData.animation.AnimationManager;
 import com.woogleFX.gameData.animation.AnimationReader;
 import com.woogleFX.gameData.ball.AtlasManager;
-import com.woogleFX.gameData.ball.BallFileOpener;
+import com.woogleFX.gameData.ball.DefaultXmlOpener;
+import com.woogleFX.gameData.ball.DefaultXmlOpener.Mode;
 import com.woogleFX.gameData.level.GameVersion;
 import com.woogleFX.gameData.particle.ParticleManager;
 import com.worldOfGoo.resrc.*;
@@ -46,6 +47,16 @@ public class GlobalResourceManager {
     private static final Map<String, EditorObject> sequelResources = new HashMap<>();
     public static Map<String, EditorObject> getSequelResources() {
         return sequelResources;
+    }
+
+    private static final Map<String, Sound> sequelMusic = new HashMap<>();
+    public static Map<String, Sound> getSequelMusic() {
+        return sequelMusic;
+    }
+
+    private static final Map<String, EditorObject> sequelAmbience = new HashMap<>();
+    public static Map<String, EditorObject> getSequelAmbience() {
+        return sequelAmbience;
     }
 
 
@@ -218,6 +229,38 @@ public class GlobalResourceManager {
             }
 
         }
+        
+        if (version == GameVersion.VERSION_WOG2) {
+            try {
+                currentSetDefaults = null;
+                ArrayList<EditorObject> music = FileManager.openWog2ResourceFile("/res/music/_resources.xml");
+                
+                for (EditorObject editorObject : music) {
+                    if (editorObject instanceof SetDefaults setDefaults) {
+                        currentSetDefaults = setDefaults;
+                    } else if (editorObject instanceof Sound sound) {
+                        sound.setSetDefaults(currentSetDefaults);
+                        sequelMusic.put(sound.getAdjustedID(), sound);
+                    }
+                }
+                
+                currentSetDefaults = null;
+                ArrayList<EditorObject> ambience = FileManager.openWog2ResourceFile("/res/ambience/_resources.xml");
+                
+                for (EditorObject editorObject : ambience) {
+                    if (editorObject instanceof SetDefaults setDefaults) {
+                        currentSetDefaults = setDefaults;
+                    } else if (editorObject instanceof Sound sound) {
+                        sound.setSetDefaults(currentSetDefaults);
+                        sequelAmbience.put(sound.getAdjustedID(), sound);
+                    }
+                }
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                e.printStackTrace();
+                ErrorAlarm.show(e);
+                return;
+            }
+        }
 
     }
 
@@ -305,13 +348,12 @@ public class GlobalResourceManager {
         try {
             AnimationManager.getBinAnimations().add(AnimBinReader.readSimpleBinAnimation(third.toPath(), third.getName()));
 
-            ArrayList<EditorObject> objects = new ArrayList<>();
             ArrayList<EditorObject> resources = new ArrayList<>();
 
-            BallFileOpener defaultHandler = new BallFileOpener(objects, resources, GameVersion.VERSION_WOG1_NEW);
+            DefaultXmlOpener defaultHandler = new DefaultXmlOpener(null, resources, GameVersion.VERSION_WOG1_NEW);
 
             File ballFileR = new File(third.getParent() + "/manifest.resrc");
-            BallFileOpener.mode = 1;
+            defaultHandler.setMode(Mode.RESOURCE);
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();

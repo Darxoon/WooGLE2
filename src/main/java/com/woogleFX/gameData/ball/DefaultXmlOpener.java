@@ -7,16 +7,19 @@ import com.woogleFX.gameData.level.GameVersion;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class BallFileOpener extends DefaultHandler {
+public class DefaultXmlOpener extends DefaultHandler {
+    public static enum Mode {
+        OBJECT,
+        RESOURCE,
+    }
+    
     public static EditorObject parent = null;
-
-    public static int mode = 0;
-
-
+    
+    private Mode mode = Mode.OBJECT;
     private final ArrayList<EditorObject> objects;
     private final ArrayList<EditorObject> resources;
     private final GameVersion version;
-    public BallFileOpener(ArrayList<EditorObject> objects,
+    public DefaultXmlOpener(ArrayList<EditorObject> objects,
                           ArrayList<EditorObject> resources,
                           GameVersion  version) {
         this.objects = objects;
@@ -24,6 +27,9 @@ public class BallFileOpener extends DefaultHandler {
         this.version = version;
     }
 
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
@@ -43,8 +49,8 @@ public class BallFileOpener extends DefaultHandler {
             }
         }
 
-        if (mode == 0) objects.add(obj);
-        else if (mode == 1) resources.add(obj);
+        if (mode == Mode.OBJECT) objects.add(obj);
+        else if (mode == Mode.RESOURCE) resources.add(obj);
 
         parent = obj;
 

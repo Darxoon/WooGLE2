@@ -76,6 +76,7 @@ public enum InputField {
     _2_GAME_LEVEL,
     _2_SOUND_ID,
     _2_MUSIC_ID,
+    _2_AMBIENCE_ID,
     _2_BALL_UID,
     _2_STRAND_TYPE,
     _2_ENVIRONMENT_ID,

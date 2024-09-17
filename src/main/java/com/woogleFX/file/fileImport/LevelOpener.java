@@ -16,7 +16,7 @@ import com.worldOfGoo.addin.AddinLevelOCD;
 
 import java.util.ArrayList;
 
-public class ObjectXMLParser extends DefaultHandler {
+public class LevelOpener extends DefaultHandler {
 
     private final ArrayList<EditorObject> scene;
     private final ArrayList<EditorObject> level;
@@ -25,7 +25,7 @@ public class ObjectXMLParser extends DefaultHandler {
     private final ArrayList<EditorObject> text;
     private final GameVersion version;
 
-    public ObjectXMLParser(ArrayList<EditorObject> scene,
+    public LevelOpener(ArrayList<EditorObject> scene,
                            ArrayList<EditorObject> level,
                            ArrayList<EditorObject> resrc,
                            ArrayList<EditorObject> addin,
