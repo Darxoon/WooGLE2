@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="Level">
 
     <attributes>
         <EditorAttribute name="version" type="_2_NUMBER" required="true"/>

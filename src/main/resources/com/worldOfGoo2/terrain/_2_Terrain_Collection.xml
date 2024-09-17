@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="TerrainCollection">
 
     <attributes>
         <EditorAttribute name="terrainTypes" type="_2_LIST_CHILD" childAlias="com.worldOfGoo2.terrain._2_Terrain_TerrainType"/>

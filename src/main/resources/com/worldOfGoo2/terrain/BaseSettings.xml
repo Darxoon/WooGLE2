@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="BaseSettings">
 
     <attributes>
         <EditorAttribute name="canBeStained" type="_2_STRING"/>

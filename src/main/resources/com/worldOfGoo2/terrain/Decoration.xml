@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="Decoration">
 
     <attributes>
         <EditorAttribute name="type" type="_2_STRING" childAlias="com.worldOfGoo2.level._2_Level_UserVariable"/>

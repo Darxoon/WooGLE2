@@ -32,18 +32,10 @@ import javafx.scene.paint.Paint;
 
 public class _2_Level_Strand extends EditorObject {
 
-    //private BallStrand strand;
-    //public void setStrand(BallStrand strand) {
-    //    this.strand = strand;
-    //}
-
-
     private Image strandImage;
     
     private _2_Level_BallInstance goo1 = null;
     private _2_Level_BallInstance goo2 = null;
-
-    //private int strandBallID = 2;
 
     public _2_Level_Strand(EditorObject parent) {
         super(parent, "Strand", GameVersion.VERSION_WOG2);
@@ -150,8 +142,21 @@ public class _2_Level_Strand extends EditorObject {
 
         if (goo1 != null && getAttribute("type").stringValue().equals("Terrain")) setAttribute("type", "10");
 
-        if (goo1 != null) goo1.updateTerrainGroup();
-        if (goo2 != null) goo2.updateTerrainGroup();
+        for (EditorObject editorObject : ((WOG2Level)LevelManager.getLevel()).getLevel().getChildren("balls"))
+            if (editorObject instanceof _2_Level_BallInstance ballInstance) {
+                String uid = ballInstance.getAttribute("uid").stringValue();
+                if (uid.equals(getAttribute("ball1UID").stringValue())) goo1 = ballInstance;
+                if (uid.equals(getAttribute("ball2UID").stringValue())) goo2 = ballInstance;
+            }
+
+        if (goo1 != null) {
+            if (!goo1.containsStrand(this)) goo1.addStrand(this);
+            goo1.updateTerrainGroup();
+        }
+        if (goo2 != null) {
+            if (!goo2.containsStrand(this)) goo2.addStrand(this);
+            goo2.updateTerrainGroup();
+        }
         
         try {
             _2Ball ball = BallManager.get2Ball(getAttribute("type").stringValue(), GameVersion.VERSION_WOG2);
@@ -374,8 +379,10 @@ public class _2_Level_Strand extends EditorObject {
         }
         
         this.goo1 = goo1;
-        goo1.addStrand(this);
-        goo1.updateTerrainGroup();
+        if (goo1 != null) {
+            goo1.addStrand(this);
+            goo1.updateTerrainGroup();
+        }
     }
 
     public _2_Level_BallInstance getGoo2() {
@@ -389,8 +396,10 @@ public class _2_Level_Strand extends EditorObject {
         }
         
         this.goo2 = goo2;
-        goo2.addStrand(this);
-        goo2.updateTerrainGroup();
+        if (goo2 != null) {
+            goo2.addStrand(this);
+            goo2.updateTerrainGroup();
+        }
     }
     
 }

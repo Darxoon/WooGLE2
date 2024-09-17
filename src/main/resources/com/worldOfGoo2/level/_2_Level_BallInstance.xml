@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="BallInstance">
 
     <attributes>
         <EditorAttribute name="typeEnum" type="_2_BALL_TYPE"/>

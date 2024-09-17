@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="GodRaySettings">
 
     <attributes>
         <EditorAttribute name="probability" type="_2_STRING"/>

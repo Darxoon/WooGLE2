@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="EdgeSettings">
 
     <attributes>
         <EditorAttribute name="topAngle" type="_2_STRING" childAlias="com.worldOfGoo2.misc._2_Point"/>

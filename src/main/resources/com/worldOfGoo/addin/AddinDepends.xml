@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="Depends">
 
     <attributes>
         <EditorAttribute name="ref" type="_1_STRING" required="true"/>

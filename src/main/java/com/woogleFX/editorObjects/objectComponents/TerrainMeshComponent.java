@@ -55,10 +55,12 @@ public class TerrainMeshComponent extends MeshComponent {
                 
                 _2_Level_BallInstance goo1 = strand.getGoo1();
                 _2_Level_BallInstance goo2 = strand.getGoo2();
+
+                if (goo1 == null || goo2 == null) continue;
                 
                 if (goo1.isConnected(ballInstance) && goo2.isConnected(ballInstance)) {
                     int hash = ballInstance.hashCode() + goo1.hashCode() + goo2.hashCode();
-                    
+
                     if (!existingTriHashes.contains(hash)) {
                         tris.add(new _2_Level_BallInstance[] {
                             ballInstance,
@@ -74,7 +76,7 @@ public class TerrainMeshComponent extends MeshComponent {
         // Merge triangles into bigger polygons
         ArrayList<ArrayList<_2_Level_BallInstance>> mergedPolygons = new ArrayList<>();
         while (tris.size() > 0) {
-            ArrayList<_2_Level_BallInstance> polygon = new ArrayList<>(Arrays.asList(tris.removeLast()));
+            ArrayList<_2_Level_BallInstance> polygon = new ArrayList<>(Arrays.asList(tris.remove(tris.size() - 1)));
             
             boolean addedVertices;
             do {

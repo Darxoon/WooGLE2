@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="DeadlySettings">
 
     <attributes>
         <EditorAttribute name="material" type="_2_STRING" childAlias="com.worldOfGoo2.ball._2_Ball_Material"/>

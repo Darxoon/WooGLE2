@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="TerrainType">
 
     <attributes>
         <EditorAttribute name="uuid" type="_2_CHILD" childAlias="com.worldOfGoo2.misc._2_UUID"/>

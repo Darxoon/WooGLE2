@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="Item">
 
     <attributes>
         <EditorAttribute name="id" type="_2_STRING" defaultValue="" required="true"/>

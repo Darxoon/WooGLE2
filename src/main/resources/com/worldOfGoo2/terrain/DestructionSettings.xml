@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="DestructionSettings">
 
     <attributes>
         <EditorAttribute name="enabled" type="_2_STRING"/>

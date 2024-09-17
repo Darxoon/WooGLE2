@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="BaseShaderUniform">
 
     <attributes>
         <EditorAttribute name="_stainFactorScale" type="_2_STRING" childAlias="com.worldOfGoo2.misc._2_Point"/>

@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="EdgeTypeSettings">
 
     <attributes>
         <EditorAttribute name="curvatureFactor" type="_2_STRING" childAlias="com.worldOfGoo2.misc._2_Point"/>

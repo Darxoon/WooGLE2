@@ -102,7 +102,7 @@ public class _2_Level_TerrainGroup extends EditorObject {
             _2_Level_Strand strand = (_2_Level_Strand)object;
             _2_Level_BallInstance ballInstance = strand.getGoo1();
             
-            if (ballInstance != null && ballInstance.getCurrentGroup() == _2_Level_TerrainGroup.this) {
+            if (ballInstance != null && ballInstance.getCurrentGroup() == _2_Level_TerrainGroup.this && ballInstance.containsStrand(strand)) {
                 strands.add(strand);
             }
         }

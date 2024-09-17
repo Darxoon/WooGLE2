@@ -1,4 +1,4 @@
-<AttributeManifest>
+<AttributeManifest localName="TerrainGroup">
 
     <attributes>
         <EditorAttribute name="typeUuid" type="_2_UUID"/>

@@ -117,7 +117,49 @@ public class EditorObject {
     }
 
     public EditorObject(EditorObject parent) {
+        this.parent = parent;
 
+        try {
+            AttributeManifest attributeManifest;
+            if (attributeManifestMap.containsKey(getClass())) {
+                attributeManifest = attributeManifestMap.get(getClass());
+            } else {
+                String attributeManifestPath = "/" + getClass().getName().replace('.', '/') + ".xml";
+                InputStream inputStream = getClass().getResourceAsStream(attributeManifestPath);
+                attributeManifest = new XmlMapper().readValue(inputStream, AttributeManifest.class);
+                attributeManifestMap.put(getClass(), attributeManifest);
+            }
+            ArrayList<EditorAttribute> attributes1 = new ArrayList<>();
+            for (EditorAttribute editorAttribute : attributeManifest.getAttributes()) {
+                EditorAttribute realAttribute = new EditorAttribute();
+                realAttribute.setDefaultValue(editorAttribute.getDefaultValue());
+                realAttribute.setObject(this);
+                realAttribute.setChildAlias(editorAttribute.getChildAlias());
+                realAttribute.setValue(editorAttribute.stringValue());
+                realAttribute.setName(editorAttribute.getName());
+                realAttribute.setType(editorAttribute.getType());
+                realAttribute.setRequired(editorAttribute.getRequired());
+                attributes1.add(realAttribute);
+            }
+            setAttributes(attributes1.toArray(new EditorAttribute[0]));
+            for (MetaEditorAttribute metaEditorAttribute : attributeManifest.getMetaAttributes()) {
+                MetaEditorAttribute mine = new MetaEditorAttribute();
+                mine.setName(metaEditorAttribute.getName());
+                mine.setOpenByDefault(metaEditorAttribute.getOpenByDefault());
+                mine.setChildren(new ArrayList<>());
+                for (MetaEditorAttribute child : metaEditorAttribute.getChildren()) {
+                    MetaEditorAttribute mine2 = new MetaEditorAttribute();
+                    mine2.setName(child.getName());
+                    mine2.setOpenByDefault(child.getOpenByDefault());
+                    mine2.setChildren(new ArrayList<>());
+                    mine.getChildren().add(mine2);
+                }
+                metaAttributes.add(mine);
+            }
+        } catch (Exception e) {
+            if (this instanceof _2_Level_BallInstance)
+                e.printStackTrace();
+        }
     }
 
 
@@ -182,7 +224,8 @@ public class EditorObject {
         return Arrays.stream(attributes).anyMatch(e -> e.getName().equals(name));
     }
     public final EditorAttribute getAttribute(String name) {
-        if (attributeAdapters.containsKey(name)) return attributeAdapters.get(name).getValue();
+        AttributeAdapter attributeAdapter2 = attributeAdapters.get(name);
+        if (attributeAdapter2 != null) return attributeAdapter2.getValue();
         AttributeAdapter[] array = attributeAdapters.values().toArray(new AttributeAdapter[0]);
         for (AttributeAdapter attributeAdapter : array) if (attributeAdapter.name.equals(name))
         {
@@ -274,6 +317,10 @@ public class EditorObject {
     }
     
     public void postInit() {}
+
+    public void onCreate() {
+
+    }
     
     /**
      * Gets called when the object is deleted.

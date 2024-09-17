@@ -18,7 +18,6 @@ import com.worldOfGoo.level.Strand;
 import com.worldOfGoo.level.Vertex;
 import com.worldOfGoo.scene.Scene;
 import com.worldOfGoo2.level._2_Level_BallInstance;
-import com.worldOfGoo2.level._2_Level_Strand;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +25,8 @@ import java.util.List;
 public class ObjectManager {
 
     public static void create(_Level _level, EditorObject _object, int row) {
+
+        System.out.println("creating " + _object);
 
         EditorObject object = _object;
 
@@ -111,7 +112,14 @@ public class ObjectManager {
     }
 
 
-    public static void deleteItem(_Level _level, EditorObject _item, boolean parentDeleted) {
+    public static List<ObjectDestructionAction> deleteItem(_Level _level, EditorObject _item, boolean parentDeleted) {
+
+        System.out.println("deleting " + _item);
+        List<ObjectDestructionAction> childActions = _item.onDelete();
+
+        if (childActions != null) for (ObjectDestructionAction action : childActions) {
+            deleteItem(_level, action.getObject(), false);
+        }
 
         for (EditorObject child : _item.getChildren().toArray(new EditorObject[0])) {
             deleteItem(_level, child, true);
@@ -162,31 +170,9 @@ public class ObjectManager {
                 _item.getParent().getTreeItem().getChildren().remove(_item.getTreeItem());
             }
 
-            if (_item instanceof _2_Level_Strand strand) {
-
-                String gb1 = strand.getAttribute("ball1UID").stringValue();
-                String gb2 = strand.getAttribute("ball2UID").stringValue();
-
-                for (EditorObject EditorObject : level.getObjects())
-                    if (EditorObject instanceof _2_Level_BallInstance ballInstance) {
-
-                        String id = ballInstance.getAttribute("uid").stringValue();
-
-                        if (gb1.equals(id)) {
-                            ballInstance.update();
-                        }
-
-                        if (gb2.equals(id)) {
-                            ballInstance.update();
-                        }
-
-                    }
-
-            }
-
         }
 
-        _item.update();
+        return childActions;
 
     }
 
@@ -203,24 +189,19 @@ public class ObjectManager {
 
             objectDestructionActions.add(new ObjectDestructionAction(selected, Math.max(row, 0)));
 
-            List<ObjectDestructionAction> childActions = selected.onDelete();
-            
-            if (childActions != null) {
-                objectDestructionActions.addAll(childActions);
-            }
-            
-            deleteItem(level, selected, false);
-
             EditorObject parentObject = (row <= 0) ? parent : parent.getTreeItem().getChildren().get(row - 1).getValue();
             if (Arrays.stream(level.getSelected()).noneMatch(e -> e == parentObject)) newSelectionBuilder.add(parentObject);
         }
-        
+
+        List<ObjectDestructionAction> allActions = new ArrayList<>(objectDestructionActions);
+
         for (ObjectDestructionAction action : objectDestructionActions) {
-            deleteItem(level, action.getObject(), false);
+            List<ObjectDestructionAction> actions = deleteItem(level, action.getObject(), false);
+            if (actions != null) allActions.addAll(actions);
         }
         
-        objectDestructionActions.sort((a, b) -> b.compareTo(a));
-        UndoManager.registerChange(objectDestructionActions.toArray(new UserAction[0]));
+        allActions.sort((a, b) -> b.compareTo(a));
+        UndoManager.registerChange(allActions.toArray(new UserAction[0]));
 
         EditorObject[] newSelected = newSelectionBuilder.toArray(new EditorObject[0]);
         level.setSelected(newSelected);

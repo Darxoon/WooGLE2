@@ -25,11 +25,35 @@ import java.util.List;
 public class _2_Level_BallInstance extends _2_Positionable {
 
     private _2_Level_TerrainGroup currentGroup = null;
+    public _2_Level_TerrainGroup getCurrentGroup() {
+        return currentGroup;
+    }
+
+
     private _2Ball ball = null;
-    private ArrayList<_2_Level_Strand> strands = new ArrayList<>();
-    
     public _2Ball getBall() {
         return ball;
+    }
+    public void updateBall() {
+        String type = getAttribute("type").stringValue();
+        ball = BallManager.get2Ball(type, getVersion());
+        if (ball == null) {
+            String invalidBallDescription = "Ball: " + type + " (version " + getVersion() + ")";
+            if (!LevelLoader.failedResources.contains(invalidBallDescription))
+                LevelLoader.failedResources.add(invalidBallDescription);
+        }
+    }
+
+
+    private final ArrayList<_2_Level_Strand> strands = new ArrayList<>();
+    public void addStrand(_2_Level_Strand strand) {
+        strands.add(strand);
+    }
+    public void removeStrand(_2_Level_Strand strand) {
+        strands.remove(strand);
+    }
+    public boolean containsStrand(_2_Level_Strand strand) {
+        return strands.contains(strand);
     }
 
 
@@ -76,25 +100,17 @@ public class _2_Level_BallInstance extends _2_Positionable {
             
         });
     }
-    
+
+
     public boolean isConnected(_2_Level_BallInstance other) {
-        if (this == other)
-            return false;
-        
-        for (int i = 0; i < strands.size(); i++) {
-            _2_Level_Strand strand = strands.get(i);
-            
-            if (strand.getGoo1() == other || strand.getGoo2() == other)
-                return true;
-        }
-        
+        if (this == other) return false;
+        for (_2_Level_Strand s : strands) if (s.getGoo1() == other || s.getGoo2() == other) return true;
         return false;
     }
 
+
     public void updateTerrainGroup() {
-        if (currentGroup != null) {
-            currentGroup.update();
-        }
+        if (currentGroup != null) currentGroup.update();
     }
     
     @Override
@@ -108,9 +124,11 @@ public class _2_Level_BallInstance extends _2_Positionable {
     public void onLoaded() {
         super.onLoaded();
 
+        updateBall();
+
         getAttribute("discovered").addChangeListener((observable, oldValue, newValue) -> update());
         getAttribute("interactive").addChangeListener((observable, oldValue, newValue) -> update());
-        getAttribute2("typeEnum").addChangeListener((observable, oldValue, newValue) -> update());
+        getAttribute2("typeEnum").addChangeListener((observable, oldValue, newValue) -> updateBall());
 
         getAttribute("pos").addChangeListener((observable, oldValue, newValue) -> updateTerrainGroup());
     }
@@ -118,27 +136,21 @@ public class _2_Level_BallInstance extends _2_Positionable {
     @Override
     public void update() {
 
-        if (LevelManager.getLevel() instanceof WOG2Level level) {
+        if (!(LevelManager.getLevel() instanceof WOG2Level level)) return;
 
-            String type = getAttribute("type").stringValue();
-            ball = BallManager.get2Ball(type, getVersion());
-            if (ball == null) {
-                String invalidBallDescription = "Ball: " + type + " (version " + getVersion() + ")";
-                if (!LevelLoader.failedResources.contains(invalidBallDescription))
-                    LevelLoader.failedResources.add(invalidBallDescription);
-            }
+        String id = getAttribute("uid").stringValue();
+        for (EditorObject object : level.getObjects()) if (object instanceof _2_Level_Strand strand) {
+            if (id.equals(strand.getAttribute("ball1UID").stringValue())) strand.setGoo1(this);
+            else if (id.equals(strand.getAttribute("ball2UID").stringValue())) strand.setGoo2(this);
+            else continue;
+            strand.update();
+        }
 
-            String id = getAttribute("uid").stringValue();
-            for (EditorObject object : level.getObjects()) if (object instanceof _2_Level_Strand strand) {
-                if (id.equals(strand.getAttribute("ball1UID").stringValue())) strand.setGoo1(this);
-                else if (id.equals(strand.getAttribute("ball2UID").stringValue())) strand.setGoo2(this);
-                else continue;
-                strand.update();
-            }
+        clearObjectComponents();
 
-            clearObjectComponents();
+        addObjectComponents(BallInstanceHelper.generateBallObjectComponents(this));
 
-            addObjectComponents(BallInstanceHelper.generateBallObjectComponents(this));
+        if (getBall() != null) {
 
             String animation = getBall().getObjects().get(0).getChildren("flashAnimation").get(0).getAttribute("flashAnimationId").stringValue();
             if (!animation.isEmpty()) {
@@ -177,37 +189,28 @@ public class _2_Level_BallInstance extends _2_Positionable {
 
     }
 
-    
     @Override
     public List<ObjectDestructionAction> onDelete() {
-        if (currentGroup != null)
-            currentGroup.removeBall(this);
+
+        if (currentGroup != null) currentGroup.removeBall(this);
         
         List<ObjectDestructionAction> outActions = new ArrayList<>();
         
         WOG2Level level = (WOG2Level)LevelManager.getLevel();
-        for (EditorObject object : level.getObjects()) {
-            if (object instanceof _2_Level_Strand strand) {
-                if (this == strand.getGoo1() || this == strand.getGoo2()) {
-                    int position = strand.getParent().getChildren().indexOf(strand);
-                    outActions.add(new ObjectDestructionAction(strand, position));
-                }
-            }
+        for (EditorObject object : level.getObjects()) if (object instanceof _2_Level_Strand strand) {
+            if (this != strand.getGoo1() && this != strand.getGoo2()) continue;
+
+            int strandPosition = strand.getParent().getChildren().indexOf(strand);
+            outActions.add(new ObjectDestructionAction(strand, strandPosition));
+
+            if (this == strand.getGoo1()) strand.setGoo1(null);
+            else strand.setGoo2(null);
+
         }
         
         return outActions;
+
     }
-    
-    public _2_Level_TerrainGroup getCurrentGroup() {
-        return currentGroup;
-    }
-    
-    public void addStrand(_2_Level_Strand strand) {
-        strands.add(strand);
-    }
-    
-    public void removeStrand(_2_Level_Strand strand) {
-        strands.remove(strand);
-    }
+
 }
 
