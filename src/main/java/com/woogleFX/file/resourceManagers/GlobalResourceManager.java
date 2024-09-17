@@ -8,7 +8,8 @@ import com.woogleFX.gameData.animation.AnimBinReader;
 import com.woogleFX.gameData.animation.AnimationManager;
 import com.woogleFX.gameData.animation.AnimationReader;
 import com.woogleFX.gameData.ball.AtlasManager;
-import com.woogleFX.gameData.ball.BallFileOpener;
+import com.woogleFX.gameData.ball.DefaultXmlOpener;
+import com.woogleFX.gameData.ball.DefaultXmlOpener.Mode;
 import com.woogleFX.gameData.level.GameVersion;
 import com.woogleFX.gameData.particle.ParticleManager;
 import com.worldOfGoo.resrc.*;
@@ -305,13 +306,12 @@ public class GlobalResourceManager {
         try {
             AnimationManager.getBinAnimations().add(AnimBinReader.readSimpleBinAnimation(third.toPath(), third.getName()));
 
-            ArrayList<EditorObject> objects = new ArrayList<>();
             ArrayList<EditorObject> resources = new ArrayList<>();
 
-            BallFileOpener defaultHandler = new BallFileOpener(objects, resources, GameVersion.VERSION_WOG1_NEW);
+            DefaultXmlOpener defaultHandler = new DefaultXmlOpener(null, resources, GameVersion.VERSION_WOG1_NEW);
 
             File ballFileR = new File(third.getParent() + "/manifest.resrc");
-            BallFileOpener.mode = 1;
+            defaultHandler.setMode(Mode.RESOURCE);
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
