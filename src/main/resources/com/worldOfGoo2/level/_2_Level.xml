@@ -20,7 +20,7 @@
         <EditorAttribute name="cameraAutoBounds" type="_2_BOOLEAN" required="true"/>
         <EditorAttribute name="ballsRateRequired" type="_2_NUMBER" required="true"/>
         <EditorAttribute name="musicId" type="_2_MUSIC_ID" defaultValue = "" required="true"/>
-        <EditorAttribute name="ambienceId" type="_2_SOUND_ID" defaultValue = "" required="true"/>
+        <EditorAttribute name="ambienceId" type="_2_AMBIENCE_ID" defaultValue = "" required="true"/>
         <EditorAttribute name="musicOffset" type="_2_NUMBER" required="true"/>
         <EditorAttribute name="ambienceOffset" type="_2_NUMBER" required="true"/>
         <EditorAttribute name="liquidScale" type="_2_NUMBER"/>

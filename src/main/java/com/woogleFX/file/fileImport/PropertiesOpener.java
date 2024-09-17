@@ -22,7 +22,7 @@ public class PropertiesOpener extends DefaultHandler {
             }
             case "WOG2" -> {
                 if (!attributes.getValue(attributes.getIndex("filepath")).isEmpty()) {
-                    FileManager.setWOG2dir(attributes.getValue(attributes.getIndex("filepath")));
+                    FileManager.setWog2dir(attributes.getValue(attributes.getIndex("filepath")));
                 }
             }
             case "Ball" -> {

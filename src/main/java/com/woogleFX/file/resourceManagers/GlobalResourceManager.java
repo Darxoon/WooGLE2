@@ -49,6 +49,16 @@ public class GlobalResourceManager {
         return sequelResources;
     }
 
+    private static final Map<String, Sound> sequelMusic = new HashMap<>();
+    public static Map<String, Sound> getSequelMusic() {
+        return sequelMusic;
+    }
+
+    private static final Map<String, EditorObject> sequelAmbience = new HashMap<>();
+    public static Map<String, EditorObject> getSequelAmbience() {
+        return sequelAmbience;
+    }
+
 
     private static final ArrayList<String> allFailedResources = new ArrayList<>();
 
@@ -218,6 +228,38 @@ public class GlobalResourceManager {
                 toAddTo.put(font.getAdjustedID(), font);
             }
 
+        }
+        
+        if (version == GameVersion.VERSION_WOG2) {
+            try {
+                currentSetDefaults = null;
+                ArrayList<EditorObject> music = FileManager.openWog2ResourceFile("/res/music/_resources.xml");
+                
+                for (EditorObject editorObject : music) {
+                    if (editorObject instanceof SetDefaults setDefaults) {
+                        currentSetDefaults = setDefaults;
+                    } else if (editorObject instanceof Sound sound) {
+                        sound.setSetDefaults(currentSetDefaults);
+                        sequelMusic.put(sound.getAdjustedID(), sound);
+                    }
+                }
+                
+                currentSetDefaults = null;
+                ArrayList<EditorObject> ambience = FileManager.openWog2ResourceFile("/res/ambience/_resources.xml");
+                
+                for (EditorObject editorObject : ambience) {
+                    if (editorObject instanceof SetDefaults setDefaults) {
+                        currentSetDefaults = setDefaults;
+                    } else if (editorObject instanceof Sound sound) {
+                        sound.setSetDefaults(currentSetDefaults);
+                        sequelAmbience.put(sound.getAdjustedID(), sound);
+                    }
+                }
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                e.printStackTrace();
+                ErrorAlarm.show(e);
+                return;
+            }
         }
 
     }

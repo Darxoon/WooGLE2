@@ -5,6 +5,7 @@ import com.woogleFX.editorObjects.attributes.EditorAttribute;
 import com.woogleFX.engine.fx.hierarchy.FXHierarchy;
 import com.woogleFX.engine.gui.BackgroundViewer;
 import com.woogleFX.file.FileManager;
+import com.woogleFX.file.resourceManagers.GlobalResourceManager;
 import com.woogleFX.file.resourceManagers.ResourceManager;
 import com.woogleFX.engine.LevelManager;
 import com.woogleFX.gameData.level.WOG1Level;
@@ -15,7 +16,6 @@ import com.woogleFX.editorObjects.attributes.InputField;
 import com.woogleFX.editorObjects.attributes.MetaEditorAttribute;
 import com.woogleFX.engine.undoHandling.userActions.AttributeChangeAction;
 import com.worldOfGoo.resrc.ResrcImage;
-import com.worldOfGoo2.level._2_Level_Item;
 import com.worldOfGoo2.util.ItemHelper;
 import com.worldOfGoo2.util.TerrainHelper;
 import javafx.application.Platform;
@@ -31,10 +31,10 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class FXPropertiesView {
 
@@ -570,6 +570,52 @@ public class FXPropertiesView {
                 }
 
             }
+            
+            case _2_MUSIC_ID -> {
+                Set<String> musicIds = GlobalResourceManager.getSequelMusic().keySet();
+                
+                for (String musicId : musicIds.stream().sorted().toArray(String[]::new)) {
+                    if (!musicId.toLowerCase().contains(currentText.toLowerCase()))
+                        continue;
+                    
+                    Button setImageItem = new Button(musicId);
+                    configureButton(setImageItem);
+
+                    setImageItem.setOnAction(event -> {
+                        UndoManager.registerChange(new AttributeChangeAction(attribute,
+                                attribute.stringValue(), musicId));
+                        attribute.getObject().setAttribute(attribute.getName(), musicId);
+                        if (contextMenu.isFocused()) {
+                            cell.commitEdit(attribute.stringValue());
+                        }
+                    });
+                    
+                    vBox.getChildren().add(setImageItem);
+                }
+            }
+            
+            case _2_AMBIENCE_ID -> {
+                Set<String> musicIds = GlobalResourceManager.getSequelAmbience().keySet();
+                
+                for (String musicId : musicIds.stream().sorted().toArray(String[]::new)) {
+                    if (!musicId.toLowerCase().contains(currentText.toLowerCase()))
+                        continue;
+                    
+                    Button setImageItem = new Button(musicId);
+                    configureButton(setImageItem);
+
+                    setImageItem.setOnAction(event -> {
+                        UndoManager.registerChange(new AttributeChangeAction(attribute,
+                                attribute.stringValue(), musicId));
+                        attribute.getObject().setAttribute(attribute.getName(), musicId);
+                        if (contextMenu.isFocused()) {
+                            cell.commitEdit(attribute.stringValue());
+                        }
+                    });
+                    
+                    vBox.getChildren().add(setImageItem);
+                }
+            }
 
         }
 
@@ -601,6 +647,7 @@ public class FXPropertiesView {
 
     private static void configureButton(Button button) {
 
+        button.setMnemonicParsing(false);
         button.setMinWidth(300);
         button.setMaxWidth(300);
         button.setPrefWidth(300);
