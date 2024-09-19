@@ -11,8 +11,8 @@ import java.util.ArrayList;
  * What... is this? */
 public class WOG2Level extends _Level {
 
-    private final _2_Level level;
-    public _2_Level getLevel() {
+    private final EditorObject level;
+    public EditorObject getLevel() {
         return level;
     }
 
@@ -27,20 +27,20 @@ public class WOG2Level extends _Level {
 
         this.objects = objects;
 
-        this.level = (_2_Level)objects.get(0);
+        this.level = objects.get(0);
 
-        setCurrentlySelectedSection("Terrain");
+        // setCurrentlySelectedSection("Terrain");
 
         LevelManager.setLevel(this);
 
-        for (EditorObject ball : getLevel().getChildren("balls")) {
-            EditorObject terrainBall = getLevel().getChildren("terrainBalls").remove(0);
-            getObjects().remove(terrainBall);
-            getLevel().getChildren().remove(terrainBall);
-            ball.setAttribute("terrainGroup", terrainBall.getAttribute("group").stringValue());
-        }
+        // for (EditorObject ball : getLevel().getChildren("balls")) {
+        //     EditorObject terrainBall = getLevel().getChildren("terrainBalls").remove(0);
+        //     getObjects().remove(terrainBall);
+        //     getLevel().getChildren().remove(terrainBall);
+        //     ball.setAttribute("terrainGroup", terrainBall.getAttribute("group").stringValue());
+        // }
 
-        resetCamera();
+        // resetCamera();
 
     }
 

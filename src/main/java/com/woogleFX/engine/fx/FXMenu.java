@@ -107,6 +107,7 @@ public class FXMenu {
     private static final MenuItem openLevelOldItem = new MenuItem();
     private static final MenuItem openLevelNewItem = new MenuItem();
     private static final MenuItem openLevel2Item = new MenuItem();
+    private static final MenuItem openItem2Item = new MenuItem();
     private static final MenuItem cloneLevelItem = new MenuItem();
     private static final MenuItem saveLevelItem = new MenuItem();
     private static final MenuItem saveAllLevelsItem = new MenuItem();
@@ -149,6 +150,11 @@ public class FXMenu {
         setIcon(openLevel2Item, prefix + "open_lvl_new.png");
         openLevel2Item.setOnAction(e -> LevelLoader.openLevel(GameVersion.VERSION_WOG2));
         levelMenu.getItems().add(openLevel2Item);
+        
+        openItem2Item.setText("Open Item (2)...");
+        setIcon(openItem2Item, prefix + "open_lvl_new.png");
+        openItem2Item.setOnAction(e -> LevelLoader.openWog2Item());
+        levelMenu.getItems().add(openItem2Item);
 
         cloneLevelItem.setText("Clone Level...");
         setIcon(cloneLevelItem, prefix + "clone_lvl.png");
@@ -328,6 +334,7 @@ public class FXMenu {
 
         newLevel2Item.setDisable(missing2Dir);
         openLevel2Item.setDisable(missing2Dir);
+        openItem2Item.setDisable(missing2Dir);
 
     }
 

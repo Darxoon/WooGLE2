@@ -428,6 +428,7 @@ public class FXEditorButtons {
     private static final Button buttonOpenOld = new Button();
     private static final Button buttonOpenNew = new Button();
     private static final Button buttonOpen2 = new Button();
+    private static final Button buttonOpenItem2 = new Button();
     private static final Button buttonClone = new Button();
     private static final Button buttonSave = new Button();
     private static final Button buttonSaveAll = new Button();
@@ -470,6 +471,11 @@ public class FXEditorButtons {
         buttonOpen2.setOnAction(e -> LevelLoader.openLevel(GameVersion.VERSION_WOG2));
         buttonOpen2.setTooltip(new DelayedTooltip("Open Level (2)"));
         toolBar.getItems().add(buttonOpen2);
+        
+        setIcon(buttonOpenItem2, prefix + "open_lvl_2.png");
+        buttonOpenItem2.setOnAction(e -> LevelLoader.openWog2Item());
+        buttonOpenItem2.setTooltip(new DelayedTooltip("Open Item (2)"));
+        toolBar.getItems().add(buttonOpenItem2);
 
         toolBar.getItems().add(new Separator());
 
@@ -967,6 +973,7 @@ public class FXEditorButtons {
         boolean has2 = !FileManager.getGameDir(GameVersion.VERSION_WOG2).isEmpty();
         buttonNew2.setDisable(!has2);
         buttonOpen2.setDisable(!has2);
+        buttonOpenItem2.setDisable(!has2);
 
         if (FXContainers.getvBox().getChildren().get(3) instanceof ToolBar) {
             FXContainers.getvBox().getChildren().remove(3);

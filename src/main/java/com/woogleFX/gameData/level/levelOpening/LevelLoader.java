@@ -11,6 +11,7 @@ import com.woogleFX.engine.gui.alarms.ErrorAlarm;
 import com.woogleFX.engine.gui.alarms.LoadingResourcesAlarm;
 import com.woogleFX.file.FileManager;
 import com.woogleFX.editorObjects.objectCreators.BlankObjectGenerator;
+import com.woogleFX.engine.gui.ItemSelector;
 import com.woogleFX.engine.gui.LevelSelector;
 import com.woogleFX.engine.LevelManager;
 import com.woogleFX.file.fileExport.GOOWriter;
@@ -48,6 +49,11 @@ public class LevelLoader {
 
     public static void openLevel(GameVersion version) {
         new LevelSelector(version).start(new Stage());
+    }
+
+    
+    public static void openWog2Item() {
+        new ItemSelector().start(new Stage());
     }
 
 
@@ -377,6 +383,97 @@ public class LevelLoader {
             FXHierarchy.getNewHierarchySwitcherButtons().getSelectionModel().select(0);
 
         }
+
+        if (!failedResources.isEmpty()) {
+            StringBuilder fullError = new StringBuilder();
+            for (String resource : failedResources) {
+                fullError.append("\n").append(resource);
+            }
+            LoadingResourcesAlarm.show(fullError.substring(1));
+        }
+
+        finishOpeningLevel(level);
+
+    }
+    
+    public static void openWog2Item(String itemId) {
+        // Don't open a level if none selected
+        if (itemId == null || itemId.isEmpty()) return;
+
+        // Don't open a level if it's already open
+        for (Tab tab : FXAssetSelectPane.getAssetSelectPane().getTabs()) {
+            if (tab.getText().equals(itemId) && ((AssetTab)tab).getAsset().getVersion() == GameVersion.VERSION_WOG2) {
+                FXAssetSelectPane.getAssetSelectPane().getSelectionModel().select(tab);
+                return;
+            }
+        }
+
+        failedResources.clear();
+
+        WOG2Level level;
+
+        try {
+            level = FileManager.openWog2Item(itemId);
+            if (level == null) return;
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            ErrorAlarm.show(e);
+            return;
+        }
+
+        level.setLevelName(itemId);
+        FXEditorButtons.updateAllButtons();
+        FXMenu.updateAllButtons();
+
+        FXAssetSelectPane.getAssetSelectPane().setMinHeight(30);
+        FXAssetSelectPane.getAssetSelectPane().setMaxHeight(30);
+
+        LoadingScreen loadingScreen = new LoadingScreen();
+
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() {
+
+                long count = level.getObjects().size();
+
+                long i = 0;
+                try {
+                    for (EditorObject object : level.getObjects().toArray(new EditorObject[0])) {
+                        object.onLoaded();
+                        object.update();
+                        i++;
+                        updateProgress(i, count);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+                for (EditorObject object : level.getObjects()) {
+                    object.postInit();
+                }
+
+                return null;
+            }
+        };
+
+        loadingScreen.setTask(task);
+        Stage stage = new Stage();
+        loadingScreen.start(stage);
+        task.setOnSucceeded(event -> stage.close());
+        task.setOnCancelled(event -> stage.close());
+        task.setOnFailed(event -> stage.close());
+        new Thread(task).start();
+
+        stage.setOnCloseRequest(event -> {
+            task.cancel();
+            FXAssetSelectPane.getAssetSelectPane().getTabs().remove(level.getAssetTab());
+        });
+
+        level.getLevel().getTreeItem().setExpanded(true);
+        FXHierarchy.getHierarchy().setRoot(level.getLevel().getTreeItem());
+
+        FXPropertiesView.getPropertiesView().setRoot(FXPropertiesView.makePropertiesViewTreeItem(new EditorObject[]{level.getLevel()}));
+
+        FXHierarchy.getNewHierarchySwitcherButtons().getSelectionModel().select(0);
 
         if (!failedResources.isEmpty()) {
             StringBuilder fullError = new StringBuilder();

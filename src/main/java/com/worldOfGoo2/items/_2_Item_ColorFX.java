@@ -2,6 +2,7 @@ package com.worldOfGoo2.items;
 
 import com.woogleFX.editorObjects.EditorObject;
 import com.woogleFX.editorObjects.attributes.InputField;
+import com.woogleFX.editorObjects.attributes.MetaEditorAttribute;
 import com.woogleFX.gameData.level.GameVersion;
 
 public class _2_Item_ColorFX extends EditorObject {
@@ -15,6 +16,7 @@ public class _2_Item_ColorFX extends EditorObject {
         addAttribute("exposure", InputField._2_NUMBER);
         addAttribute("saturation", InputField._2_NUMBER);
 
+        setMetaAttributes(MetaEditorAttribute.parse("enabled,brightness,contrast,exposure,saturation,"));
     }
 
 }

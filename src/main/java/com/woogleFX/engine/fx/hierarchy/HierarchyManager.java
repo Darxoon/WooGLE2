@@ -183,7 +183,7 @@ public class HierarchyManager {
                 }
                 imageView = new ImageView(getObjectIcon(cell.getTableRow().getItem().getClass(), terrain));
                 if (cell.getTableRow().getItem().getType().equals("Item")) {
-                    cell.setText(cell.getTableRow().getItem().getAttribute("type").stringValue());
+                    cell.setText(cell.getTableRow().getItem().getAttribute("name").stringValue());
                     imageView.setImage(getItemIcon(cell.getTableRow().getItem().getAttribute("type").stringValue()));
                 }
                 imageView.setFitWidth(16);

@@ -28,7 +28,7 @@ import com.woogleFX.gameData.level.GameVersion;
 import com.woogleFX.gameData.level.WOG1Level;
 import com.woogleFX.gameData.level.WOG2Level;
 import com.worldOfGoo2.ball._2_Ball;
-import com.worldOfGoo2.items._2_Item_Collection;
+import com.worldOfGoo2.items._2_Item;
 import com.worldOfGoo2.level._2_Level;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
@@ -38,6 +38,7 @@ import org.xml.sax.SAXException;
 
 import com.woogleFX.gameData.ball._Ball;
 import com.woogleFX.gameData.ball.DefaultXmlOpener.Mode;
+import com.woogleFX.gameData.items.ItemManager;
 import com.woogleFX.gameData.level._Level;
 
 import javafx.scene.image.Image;
@@ -255,6 +256,35 @@ public class FileManager {
     }
 
 
+    public static WOG2Level openWog2Item(String itemId) throws ParserConfigurationException, SAXException, IOException {
+
+        LevelManager.setLevel(null);
+
+        ArrayList<EditorObject> addin = new ArrayList<>();
+        _2_Item item = ItemManager.getItem(itemId);
+
+        item.getParent().getChildren().remove(item);
+        item.setParent(null);
+        
+        ArrayList<EditorObject> objects = new ArrayList<>();
+        Stack<EditorObject> toAdd = new Stack<>();
+        toAdd.push(item);
+        while (!toAdd.isEmpty()) {
+            EditorObject thisObject = toAdd.pop();
+            System.out.println(thisObject);
+            objects.add(thisObject);
+            for (EditorObject child : thisObject.getChildren()) {
+                toAdd.push(child);
+            }
+
+        }
+
+        supremeAddToList(addin, BlankObjectGenerator.generateBlankAddinObject(itemId, GameVersion.VERSION_WOG2));
+
+        return new WOG2Level(objects, addin);
+    }
+
+
     public static _Ball openBall(String ballName, GameVersion version) throws ParserConfigurationException, SAXException, IOException {
 
         /* Make sure a ball from an invalid version isn't being opened (possible because of properties.xml) */
@@ -422,23 +452,6 @@ public class FileManager {
             saxParser.parse(ballFile2, defaultHandler);
         }
         return objects;
-    }
-
-
-    public static ArrayList<EditorObject> openItems(GameVersion version) throws IOException {
-
-        ArrayList<EditorObject> items = new ArrayList<>();
-
-        for (File itemFile : new File(wog2dir + "/res/items").listFiles()) {
-
-            if (itemFile.getName().endsWith(".wog2")) {
-                items.addAll(ObjectGOOParser.read(_2_Item_Collection.class, Files.readString(itemFile.toPath())).getChildren());
-            }
-
-        }
-
-        return items;
-
     }
 
 

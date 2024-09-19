@@ -88,7 +88,7 @@ public class _2_Level_BallInstance extends _2_Positionable {
                 int newValue = Integer.parseInt(value);
                 setAttribute2("terrainGroup", newValue);
                 
-                _2_Level level = ((WOG2Level)LevelManager.getLevel()).getLevel();
+                EditorObject level = ((WOG2Level)LevelManager.getLevel()).getLevel();
                 ArrayList<EditorObject> terrainGroups = level.getChildren("terrainGroups");
                 
                 if (newValue >= 0 && newValue < terrainGroups.size()) {
